@@ -14,10 +14,12 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.setWindowTitle('Gerenciamento de Banco de Dados')
         self.setGeometry(100, 100, 600, 400)
+        self.setStyleSheet('background-color: #1C1D21')
 
         self.menu_widget = QWidget(self)
         self.setCentralWidget(self.menu_widget)
         self.layout = QVBoxLayout(self.menu_widget)
+
 
         # Botões de CREATE, READ, UPDATE e DELETE
         self.create_button = QPushButton('Adicionar Médico / Paciente / Medicamento / Consulta')
@@ -26,6 +28,13 @@ class MainWindow(QMainWindow):
         self.delete_button = QPushButton('Deletar Dados')
         # Botão de fechar aplicação
         self.exit_button = QPushButton('Sair')
+
+        # Colorir os botões
+        self.create_button.setStyleSheet("background-color: #A288A6")
+        self.read_button.setStyleSheet("background-color: #A288A6")
+        self.update_button.setStyleSheet("background-color: #A288A6")
+        self.delete_button.setStyleSheet("background-color: #A288A6")
+        self.exit_button.setStyleSheet("background-color: #F1E3E4")
 
         self.layout.addWidget(self.create_button)
         self.layout.addWidget(self.read_button)
@@ -36,6 +45,8 @@ class MainWindow(QMainWindow):
         # Conectar os botões com as janelas do PyQT
         self.create_button.clicked.connect(self.open_create_window)
         self.read_button.clicked.connect(self.open_read_window)
+        self.update_button.clicked.connect(self.open_update_window)
+        self.delete_button.clicked.connect(self.open_delete_window)
         self.exit_button.clicked.connect(self.close)
 
     def open_create_window(self):
@@ -46,6 +57,13 @@ class MainWindow(QMainWindow):
         self.read_window = ReadWindow()
         self.read_window.show()
 
+    def open_update_window(self):
+        self.update_window = UpdateWindow()
+        self.update_window.show()
+
+    def open_delete_window(self):
+        self.delete_window = DeleteWindow()
+        self.delete_window.show()
 
 class CreateWindow(QMainWindow):
 
@@ -56,14 +74,16 @@ class CreateWindow(QMainWindow):
         self.widget = QWidget(self)
         self.setCentralWidget(self.widget)
         self.layout = QVBoxLayout(self.widget)
+        self.setStyleSheet('background-color: #F1E3E4')
 
         self.entity_combo = QComboBox()
         self.entity_combo.addItems(['Médico', 'Paciente', 'Medicamento', 'Consulta'])
-        self.layout.addWidget(QLabel('Selecionar Entidade: '))
+        entity_label = self.layout.addWidget(QLabel('Selecionar Entidade: '))
         self.layout.addWidget(self.entity_combo)
 
         # Input de dados
         self.name_input = QLineEdit()
+        self.name_input.setPlaceholderText('Dipirona')
         self.age_input = QLineEdit()
         self.specialization_input = QLineEdit()
         self.description_input = QLineEdit()
@@ -98,6 +118,18 @@ class CreateWindow(QMainWindow):
         self.data_consulta_label = QLabel('Data da consulta: ')
         self.layout.addWidget(self.data_consulta_label)
         self.layout.addWidget(self.data_consulta_input)
+
+        # Colorir os inputs e labels
+        self.entity_combo.setStyleSheet('background-color: #BB9BB0')
+
+        self.name_paciente_input.setStyleSheet('background-color: #BB9BB0')
+        self.name_medico_input.setStyleSheet('background-color: #BB9BB0')
+        self.name_paciente_input.setStyleSheet('background-color: #BB9BB0')
+        self.data_consulta_input.setStyleSheet('background-color: #BB9BB0')
+        self.specialization_input.setStyleSheet('background-color: #BB9BB0')
+        self.description_input.setStyleSheet('background-color: #BB9BB0')
+        self.age_input.setStyleSheet('background-color: #BB9BB0')
+        self.name_input.setStyleSheet('background-color: #BB9BB0')
 
         # Botão Adicionar
         self.add_button = QPushButton('Adicionar ao Banco de Dados')
@@ -230,6 +262,7 @@ class ReadWindow(QMainWindow):
         self.widget = QWidget(self)
         self.setCentralWidget(self.widget)
         self.layout = QVBoxLayout(self.widget)
+        self.setStyleSheet('background-color: #F1E3E4')
 
         self.entity_combo = QComboBox()
         self.entity_combo.addItems(['Médico', 'Paciente', 'Medicamento', 'Consulta'])
@@ -298,6 +331,23 @@ class ReadWindow(QMainWindow):
         except Exception as e:
             print(f"Erro ao consultar a entidade {entity}: {e}")
             QMessageBox.critical(self, 'Erro', f"Ocorreu um erro ao consultar a entidade {entity}: {e}")
+
+
+class UpdateWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Atualizar Banco de Dados")
+        self.setGeometry(100, 100, 600, 400)
+        self.setStyleSheet('background-color: #F1E3E4')
+
+
+class DeleteWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Deletar dados do Banco de Dados")
+        self.setGeometry(100, 100, 600, 400)
+        self.setStyleSheet('background-color: #F1E3E4')
+
 
 
 if __name__ == '__main__':
