@@ -340,6 +340,134 @@ class UpdateWindow(QMainWindow):
         self.setGeometry(100, 100, 600, 400)
         self.setStyleSheet('background-color: #F1E3E4')
 
+        # Layout principal
+        self.widget = QWidget(self)
+        self.setCentralWidget(self.widget)
+        self.layout = QVBoxLayout(self.widget)
+
+        # Seleção de entidade e ID
+        self.entity_combo = QComboBox()
+        self.entity_combo.addItems(['Médico', 'Paciente', 'Medicamento', 'Consulta'])
+        self.layout.addWidget(QLabel('Selecionar Entidade: '))
+        self.layout.addWidget(self.entity_combo)
+
+        self.id_input = QLineEdit()
+        self.id_input.setPlaceholderText("ID do registro para atualizar")
+        self.layout.addWidget(self.id_input)
+
+        # Campos de entrada
+        self.name_input = QLineEdit()
+        self.specialization_input = QLineEdit()
+        self.age_input = QLineEdit()
+        self.description_input = QLineEdit()
+        self.data_input = QLineEdit()
+
+        # Labels e campos de entrada
+        self.name_label = QLabel('Nome:')
+        self.specialization_label = QLabel('Especialidade:')
+        self.age_label = QLabel('Idade:')
+        self.description_label = QLabel('Descrição:')
+        self.data_label = QLabel('Data da Consulta:')
+
+        # Adiciona os campos ao layout
+        self.layout.addWidget(self.name_label)
+        self.layout.addWidget(self.name_input)
+        self.layout.addWidget(self.specialization_label)
+        self.layout.addWidget(self.specialization_input)
+        self.layout.addWidget(self.age_label)
+        self.layout.addWidget(self.age_input)
+        self.layout.addWidget(self.description_label)
+        self.layout.addWidget(self.description_input)
+        self.layout.addWidget(self.data_label)
+        self.layout.addWidget(self.data_input)
+
+        # Botão de atualização
+        self.update_button = QPushButton('Atualizar')
+        self.layout.addWidget(self.update_button)
+
+        # Conectar o evento de seleção de entidade para ajustar os campos
+        self.entity_combo.currentIndexChanged.connect(self.adjust_fields)
+
+        # Conectar evento de clique do botão
+        self.update_button.clicked.connect(self.update_entity)
+
+        # Ajusta os campos inicialmente
+        self.adjust_fields()
+
+    def adjust_fields(self):
+        entity = self.entity_combo.currentText()
+
+        # Esconde todos os campos primeiro
+        self.name_label.hide()
+        self.name_input.hide()
+        self.specialization_label.hide()
+        self.specialization_input.hide()
+        self.age_label.hide()
+        self.age_input.hide()
+        self.description_label.hide()
+        self.description_input.hide()
+        self.data_label.hide()
+        self.data_input.hide()
+
+        # Exibe os campos conforme a entidade selecionada
+        if entity == 'Médico':
+            self.name_label.show()
+            self.name_input.show()
+            self.specialization_label.show()
+            self.specialization_input.show()
+
+        elif entity == 'Paciente':
+            self.name_label.show()
+            self.name_input.show()
+            self.age_label.show()
+            self.age_input.show()
+
+        elif entity == 'Medicamento':
+            self.name_label.show()
+            self.name_input.show()
+            self.description_label.show()
+            self.description_input.show()
+
+        elif entity == 'Consulta':
+            self.data_label.show()
+            self.data_input.show()
+
+    def update_entity(self):
+        entity = self.entity_combo.currentText()
+        entity_id = self.id_input.text()
+
+        try:
+            if entity == 'Médico':
+                medico = session.query(Medico).get(entity_id)
+                if medico:
+                    medico.nome = self.name_input.text()
+                    medico.especialidade = self.specialization_input.text()
+                    session.commit()
+
+            elif entity == 'Paciente':
+                paciente = session.query(Paciente).get(entity_id)
+                if paciente:
+                    paciente.nome = self.name_input.text()
+                    paciente.idade = self.age_input.text()
+                    session.commit()
+
+            elif entity == 'Medicamento':
+                medicamento = session.query(Medicamento).get(entity_id)
+                if medicamento:
+                    medicamento.nome = self.name_input.text()
+                    medicamento.descricao = self.description_input.text()
+                    session.commit()
+
+            elif entity == 'Consulta':
+                consulta = session.query(Consulta).get(entity_id)
+                if consulta:
+                    consulta.data = self.data_input.text()
+                    session.commit()
+
+            QMessageBox.information(self, 'Sucesso', f'{entity} atualizado com sucesso!')
+        except Exception as e:
+            QMessageBox.critical(self, 'Erro', f'Erro ao atualizar {entity}: {e}')
+
 
 class DeleteWindow(QMainWindow):
     def __init__(self):
@@ -348,6 +476,60 @@ class DeleteWindow(QMainWindow):
         self.setGeometry(100, 100, 600, 400)
         self.setStyleSheet('background-color: #F1E3E4')
 
+        # Layout principal
+        self.widget = QWidget(self)
+        self.setCentralWidget(self.widget)
+        self.layout = QVBoxLayout(self.widget)
+
+        # Seleção de entidade e ID
+        self.entity_combo = QComboBox()
+        self.entity_combo.addItems(['Médico', 'Paciente', 'Medicamento', 'Consulta'])
+        self.layout.addWidget(QLabel('Selecionar Entidade: '))
+        self.layout.addWidget(self.entity_combo)
+
+        self.id_input = QLineEdit()
+        self.id_input.setPlaceholderText("ID do registro para deletar")
+        self.layout.addWidget(self.id_input)
+
+        # Botão de exclusão
+        self.delete_button = QPushButton('Deletar')
+        self.layout.addWidget(self.delete_button)
+
+        # Conectar evento de clique do botão
+        self.delete_button.clicked.connect(self.delete_entity)
+
+    def delete_entity(self):
+        entity = self.entity_combo.currentText()
+        entity_id = self.id_input.text()
+
+        try:
+            if entity == 'Médico':
+                medico = session.query(Medico).get(entity_id)
+                if medico:
+                    session.delete(medico)
+                    session.commit()
+
+            elif entity == 'Paciente':
+                paciente = session.query(Paciente).get(entity_id)
+                if paciente:
+                    session.delete(paciente)
+                    session.commit()
+
+            elif entity == 'Medicamento':
+                medicamento = session.query(Medicamento).get(entity_id)
+                if medicamento:
+                    session.delete(medicamento)
+                    session.commit()
+
+            elif entity == 'Consulta':
+                consulta = session.query(Consulta).get(entity_id)
+                if consulta:
+                    session.delete(consulta)
+                    session.commit()
+
+            QMessageBox.information(self, 'Sucesso', f'{entity} deletado com sucesso!')
+        except Exception as e:
+            QMessageBox.critical(self, 'Erro', f'Erro ao deletar {entity}: {e}')
 
 
 if __name__ == '__main__':
