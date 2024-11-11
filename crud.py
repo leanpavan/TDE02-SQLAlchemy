@@ -48,3 +48,17 @@ while True:
                 continue
     elif (escolha == "0"):
         break
+
+
+from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QComboBox, QLabel, QTableWidget, QTableWidgetItem, QMessageBox, QLineEdit, QPushButton
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine, text
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy.orm import relationship
+
+# Setup the database connection and session
+db = create_engine('sqlite:///medico_paciente.db', echo=True)
+Session = sessionmaker(bind=db)
+session = Session()
+Base = declarative_base()
